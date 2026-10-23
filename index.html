@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Redwood Valley Public Health Crisis exercise dashboard"
+    />
+    <title>Redwood Valley | Public Health Crisis</title>
+    <style>
+      :root {
+        --navy: #182d3b;
+        --navy-soft: #203d52;
+        --teal: #25675f;
+        --gold: #d3b67d;
+        --paper: #f5f5f1;
+        --ink: #253844;
+        --muted: #64717a;
+        --line: #dce0df;
+        --danger: #b6553d;
+        --success: #2f7a66;
+        --shadow: rgba(24, 45, 59, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--paper);
+        color: var(--ink);
+        line-height: 1.6;
+      }
+
+      a { color: inherit; text-decoration: none; }
+
+      .exercise-bar {
+        background: #e9e6dd;
+        color: var(--ink);
+        padding: 10px 24px;
+        text-align: center;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .exercise-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+
+      .bar-rule {
+        margin: 0 10px;
+        opacity: 0.7;
+      }
+
+      header {
+        background: #ffffff;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .header-inner,
+      main,
+      footer {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .header-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        min-height: 88px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        font-size: 13px;
+      }
+
+      .brand-mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 62px;
+        height: 62px;
+        background: var(--navy);
+        color: var(--gold);
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 28px;
+        font-weight: 700;
+        border-radius: 6px;
+      }
+
+      .brand small {
+        display: block;
+        margin-top: 6px;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+      }
+
+      .hero {
+        background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+        color: #fff;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 32px;
+        align-items: center;
+        padding: 52px 0 44px;
+      }
+
+      .hero h1 {
+        margin: 0 0 14px;
+        font-size: clamp(40px, 5vw, 62px);
+        line-height: 1.08;
+        font-family: Georgia, 'Times New Roman', serif;
+        letter-spacing: -0.03em;
+      }
+
+      .hero .kicker {
+        color: var(--gold);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      .hero p {
+        color: rgba(255, 255, 255, 0.8);
+        margin: 0 0 24px;
+        max-width: 620px;
+        font-size: 18px;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 22px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .button.primary {
+        background: var(--teal);
+        color: #fff;
+      }
+
+      .button.primary:hover {
+        background: #1b4f48;
+      }
+
+      .button.secondary {
+        background: #fff;
+        color: var(--navy);
+        border-color: rgba(255,255,255,0.3);
+      }
+
+      .hero-panel {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.14);
+        padding: 26px;
+        border-radius: 12px;
+      }
+
+      .hero-panel h2 {
+        margin: 0 0 18px;
+        color: var(--gold);
+        font-size: 21px;
+        font-family: Georgia, 'Times New Roman', serif;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .stat-box {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 16px;
+      }
+
+      .stat-box strong {
+        display: block;
+        font-size: 28px;
+        font-family: Georgia, 'Times New Roman', serif;
+        color: var(--gold);
+        margin-bottom: 2px;
+      }
+
+      .stat-box span {
+        color: rgba(255,255,255,0.75);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      main {
+        padding-top: 36px;
+        padding-bottom: 56px;
+      }
+
+      .section-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 28px;
+        margin: 32px 0;
+      }
+
+      .panel {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 8px 24px var(--shadow);
+      }
+
+      .panel-body {
+        padding: 26px;
+      }
+
+      .panel h3 {
+        margin: 0 0 14px;
+        font-size: 28px;
+        line-height: 1.2;
+        font-family: Georgia, 'Times New Roman', serif;
+        color: var(--navy);
+      }
+
+      .list {
+        margin: 0 0 0 20px;
+        padding: 0;
+        color: var(--muted);
+      }
+
+      .list li + li {
+        margin-top: 10px;
+      }
+
+      .decision {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .option {
+        display: block;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 18px;
+        background: #fafaf8;
+        cursor: pointer;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+      }
+
+      .option:hover {
+        border-color: #bfc9ca;
+        transform: translateY(-1px);
+      }
+
+      .option input {
+        display: none;
+      }
+
+      .option.selected {
+        border-color: var(--teal);
+        background: #edf5f0;
+      }
+
+      .option strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 16px;
+        color: var(--navy);
+      }
+
+      .option span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .metrics {
+        margin-top: 18px;
+      }
+
+      .metric {
+        margin-bottom: 18px;
+      }
+
+      .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .metric-bar {
+        height: 12px;
+        width: 100%;
+        background: #e7eaeb;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .metric-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--teal), #6fa39c);
+      }
+
+      .die-button {
+        margin-top: 14px;
+        width: 100%;
+      }
+
+      .notice {
+        background: #edf3ed;
+        border: 1px solid #c7d7c8;
+        color: var(--ink);
+        padding: 16px 18px;
+        border-radius: 10px;
+        font-size: 14px;
+      }
+
+      .footer-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 24px 0;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 820px) {
+        .hero-grid,
+        .section-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .header-inner {
+          flex-direction: column;
+          justify-content: center;
+          padding: 18px 0;
+        }
+
+        .eyebrow {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="exercise-bar">
+      <span class="exercise-dot" aria-hidden="true"></span>
+      Exercise only / fictional scenario · educational simulation
+    </div>
+
+    <header>
+      <div class="header-inner">
+        <div class="brand" aria-label="Redwood Valley emergency operations center">
+          <span class="brand-mark" aria-hidden="true">RV<span style="color: var(--gold);">+</span></span>
+          <span>
+            Redwood Valley
+            <small>Emergency Operations Center</small>
+          </span>
+        </div>
+
+        <div class="eyebrow">Executive Leadership Exercise / RV-PH 01</div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="header-inner hero-grid">
+        <div>
+          <div class="kicker">Public health crisis response</div>
+          <h1>Lead the county through a rising outbreak.</h1>
+          <p>
+            Decide how to balance urgency, legal authority, public trust, and hospital
+            capacity while your community faces a fast-moving public health emergency.
+          </p>
+          <div class="cta-row">
+            <a href="#exercise" class="button primary">Launch the exercise</a>
+            <a href="#overview" class="button secondary">View summary</a>
+          </div>
+        </div>
+
+        <aside class="hero-panel" aria-label="Current status at a glance">
+          <h2>Current status</h2>
+          <div class="stat-grid">
+            <div class="stat-box">
+              <strong id="caseValue">12</strong>
+              <span>Confirmed cases</span>
+            </div>
+            <div class="stat-box">
+              <strong id="trustValue">65%</strong>
+              <span>Trust</span>
+            </div>
+            <div class="stat-box">
+              <strong id="capacityValue">70%</strong>
+              <span>Capacity</span>
+            </div>
+            <div class="stat-box">
+              <strong id="legalValue">20%</strong>
+              <span>Legal exposure</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <main id="overview">
+      <div class="section-grid">
+        <section class="panel">
+          <div class="panel-body">
+            <h3>Scenario briefing</h3>
+            <ul class="list">
+              <li>Multiple measles exposures have been linked to schools, a community event, and an emergency department.</li>
+              <li>County leadership must decide whether to act broadly, coordinate targeted outreach, or delay action.</li>
+              <li>Every decision changes the balance between clinical urgency, legal safeguards, and public confidence.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel" id="exercise">
+          <div class="panel-body">
+            <h3>Decision prompt</h3>
+            <div class="decision" id="decisionOptions">
+              <label class="option selected" data-choice="0">
+                <input type="radio" name="decision" checked />
+                <strong>Launch a broad emergency response</strong>
+                <span>Public warning, rapid tracing, expanded testing, and vaccination access.</span>
+              </label>
+
+              <label class="option" data-choice="1">
+                <input type="radio" name="decision" />
+                <strong>Use a targeted, coordinated response</strong>
+                <span>Focused message, partner outreach, and adaptive monitoring based on evidence.</span>
+              </label>
+
+              <label class="option" data-choice="2">
+                <input type="radio" name="decision" />
+                <strong>Begin with voluntary monitoring</strong>
+                <span>Issue limited guidance while waiting for better information.</span>
+              </label>
+            </div>
+
+            <button id="applyDecision" class="button primary die-button">Apply decision</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel">
+        <div class="panel-body">
+          <h3>Operational metrics</h3>
+          <div class="metrics">
+            <div class="metric">
+              <div class="metric-header">
+                <span>Outbreak severity</span>
+                <strong id="severityLabel">35%</strong>
+              </div>
+              <div class="metric-bar">
+                <div id="severityBar" class="metric-fill" style="width: 35%;"></div>
+              </div>
+            </div>
+
+            <div class="metric">
+              <div class="metric-header">
+                <span>Community trust</span>
+                <strong id="trustLabel">65%</strong>
+              </div>
+              <div class="metric-bar">
+                <div id="trustBar" class="metric-fill" style="width: 65%; background: linear-gradient(90deg, #4d9bc5, #82bfd5);"></div>
+              </div>
+            </div>
+
+            <div class="metric">
+              <div class="metric-header">
+                <span>Hospital capacity</span>
+                <strong id="capacityLabel">70%</strong>
+              </div>
+              <div class="metric-bar">
+                <div id="capacityBar" class="metric-fill" style="width: 70%; background: linear-gradient(90deg, #d59d51, #e7c67d);"></div>
+              </div>
+            </div>
+
+            <div class="metric">
+              <div class="metric-header">
+                <span>Legal exposure</span>
+                <strong id="legalLabel">20%</strong>
+              </div>
+              <div class="metric-bar">
+                <div id="legalBar" class="metric-fill" style="width: 20%; background: linear-gradient(90deg, #a06b52, #cf9079);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="notice" style="margin-top: 28px;">
+        This project is designed as a static web page and can be hosted without a framework. It is best served through a simple local web server or GitHub Pages.
+      </div>
+    </main>
+
+    <footer class="header-inner">
+      <div class="footer-bar">
+        <span>Redwood Valley / public health response</span>
+        <span>Fictional educational simulation. Not medical or legal advice.</span>
+      </div>
+    </footer>
+
+    <script>
+      const state = {
+        severity: 35,
+        trust: 65,
+        capacity: 70,
+        legal: 20,
+        cases: 12,
+      };
+
+      const choiceEffects = {
+        0: { severity: -9, trust: -3, capacity: -6, legal: 3, cases: 6 },
+        1: { severity: -5, trust: 5, capacity: -3, legal: -3, cases: 2 },
+        2: { severity: 13, trust: 1, capacity: -8, legal: 5, cases: 9 }
+      };
+
+      const clamp = (value) => Math.min(100, Math.max(0, value));
+
+      function updateDisplay() {
+        document.getElementById('caseValue').textContent = state.cases;
+        document.getElementById('trustValue').textContent = `${state.trust}%`;
+        document.getElementById('capacityValue').textContent = `${state.capacity}%`;
+        document.getElementById('legalValue').textContent = `${state.legal}%`;
+
+        document.getElementById('severityLabel').textContent = `${state.severity}%`;
+        document.getElementById('trustLabel').textContent = `${state.trust}%`;
+        document.getElementById('capacityLabel').textContent = `${state.capacity}%`;
+        document.getElementById('legalLabel').textContent = `${state.legal}%`;
+
+        document.getElementById('severityBar').style.width = `${state.severity}%`;
+        document.getElementById('trustBar').style.width = `${state.trust}%`;
+        document.getElementById('capacityBar').style.width = `${state.capacity}%`;
+        document.getElementById('legalBar').style.width = `${state.legal}%`;
+      }
+
+      const decisionOptions = document.querySelectorAll('.option');
+      decisionOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          decisionOptions.forEach((item) => item.classList.remove('selected'));
+          option.classList.add('selected');
+          option.querySelector('input').checked = true;
+        });
+      });
+
+      document.getElementById('applyDecision').addEventListener('click', () => {
+        const selected = document.querySelector('.option.selected');
+        const key = Number(selected.dataset.choice);
+        const effects = choiceEffects[key];
+
+        state.severity = clamp(state.severity + effects.severity);
+        state.trust = clamp(state.trust + effects.trust);
+        state.capacity = clamp(state.capacity + effects.capacity);
+        state.legal = clamp(state.legal + effects.legal);
+        state.cases = Math.max(12, state.cases + effects.cases);
+
+        updateDisplay();
+      });
+
+      updateDisplay();
+    </script>
+  </body>
+</html>
